@@ -6,16 +6,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-public class GetOtpMessage implements OnReceiverListener {
+public class GetOtpMessage {
     private Context context;
 
-    private String otp = "";
+    private OnOtpReceivedListener otpReceivedListener;
 
-    public GetOtpMessage(Context context) {
+    public GetOtpMessage(Context context, OnOtpReceivedListener otpReceivedListener) {
         this.context = context;
+        this.otpReceivedListener = otpReceivedListener;
     }
 
-    private BroadcastReceiver receiver;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equalsIgnoreCase("otp")) {
+                otpReceivedListener.onSuccess(intent.getStringExtra("message"));
+            } else {
+                otpReceivedListener.onFailure("Didn't receive OTP. Please try again after sometime");
+            }
+        }
+    };
 
     public void startReceiver() {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter("otp"));
@@ -25,19 +35,9 @@ public class GetOtpMessage implements OnReceiverListener {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver);
     }
 
-    public String getOtp() {
-        return otp;
-    }
+    private interface OnOtpReceivedListener {
+        void onSuccess(String otp);
 
-    @Override
-    public void onReceived() {
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equalsIgnoreCase("otp")) {
-                    otp = intent.getStringExtra("message");
-                }
-            }
-        };
+        void onFailure(String message);
     }
 }
