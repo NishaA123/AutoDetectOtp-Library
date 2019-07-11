@@ -35,7 +35,7 @@ public class GetOtpMessage {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver);
     }
 
-    private interface OnOtpReceivedListener {
+    public interface OnOtpReceivedListener {
         void onSuccess(String otp);
 
         void onFailure(String message);
