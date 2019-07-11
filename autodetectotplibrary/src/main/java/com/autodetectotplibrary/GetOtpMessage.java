@@ -6,8 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-public class GetOtpMessage {
-
+public class GetOtpMessage implements OnReceiverListener {
     private Context context;
 
     private String otp = "";
@@ -16,14 +15,7 @@ public class GetOtpMessage {
         this.context = context;
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("otp")) {
-                otp = intent.getStringExtra("message");
-            }
-        }
-    };
+    private BroadcastReceiver receiver;
 
     public void startReceiver() {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter("otp"));
@@ -37,4 +29,15 @@ public class GetOtpMessage {
         return otp;
     }
 
+    @Override
+    public void onReceived() {
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equalsIgnoreCase("otp")) {
+                    otp = intent.getStringExtra("message");
+                }
+            }
+        };
+    }
 }

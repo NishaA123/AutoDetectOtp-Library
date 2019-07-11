@@ -9,6 +9,9 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class OtpReceiver extends BroadcastReceiver {
+
+    private Worker worker = new Worker();
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -31,6 +34,7 @@ public class OtpReceiver extends BroadcastReceiver {
                     Intent myIntent = new Intent("otp");
                     myIntent.putExtra("message", message1);
                     LocalBroadcastManager.getInstance(context).sendBroadcast(myIntent);
+                    worker.onEvent();
 
                 }
             }
