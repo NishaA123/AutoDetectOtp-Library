@@ -23,7 +23,9 @@
             </intent-filter>
         </activity>
         <receiver android:name="com.autodetectotplibrary.OtpReceiver"
-            android:permission="android.permission.BROADCAST_SMS">
+            android:permission="android.permission.BROADCAST_SMS"
+            android:enabled="true"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
