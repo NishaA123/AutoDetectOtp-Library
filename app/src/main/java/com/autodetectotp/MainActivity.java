@@ -24,16 +24,11 @@ public class MainActivity extends AppCompatActivity {
             android.Manifest.permission.SEND_SMS,
             android.Manifest.permission.READ_SMS,
     };
-//    private GetOtpMessage getOtpMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        getOtpMessage=new GetOtpMessage(this);
-//        getOtpMessage.onReceived();
-
         if (!hasPermissions(this, PERMISSIONS))
             ActivityCompat.requestPermissions(MainActivity.this,
                     PERMISSIONS,
@@ -63,16 +58,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-        getOtpMessage.startReceiver();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getOtpMessage.stopReceiver();
-    }*/
 }

@@ -27,11 +27,11 @@ public class GetOtpMessage {
         }
     };
 
-    public void startReceiver() {
+    public void start() {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter("otp"));
     }
 
-    public void stopReceiver() {
+    public void stop() {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver);
     }
 
