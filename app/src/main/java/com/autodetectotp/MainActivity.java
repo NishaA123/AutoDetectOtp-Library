@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.autodetectotplibrary.GetOtpMessage;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GetOtpMessage.OnOtpReceivedListener {
 
     private int PERMISSION_REQUEST_CODE = 1;
     private String[] PERMISSIONS = {
@@ -24,15 +24,18 @@ public class MainActivity extends AppCompatActivity {
             android.Manifest.permission.SEND_SMS,
             android.Manifest.permission.READ_SMS,
     };
+    private GetOtpMessage getOtpMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!hasPermissions(this, PERMISSIONS))
+        /*if (!hasPermissions(this, PERMISSIONS))
             ActivityCompat.requestPermissions(MainActivity.this,
                     PERMISSIONS,
                     PERMISSION_REQUEST_CODE);
+
+        getOtpMessage = new GetOtpMessage(this, this);*/
     }
 
     @Override
@@ -57,5 +60,27 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onResume() {
+//        getOtpMessage.start();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        getOtpMessage.stop();
+    }
+
+    @Override
+    public void onSuccess(String otp) {
+
+    }
+
+    @Override
+    public void onFailure(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
