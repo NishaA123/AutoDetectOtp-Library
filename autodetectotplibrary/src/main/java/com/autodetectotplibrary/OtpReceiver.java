@@ -39,7 +39,7 @@ public class OtpReceiver extends BroadcastReceiver {
                             || message.contains("One Time Password")) {
 
                         if (message.contains("OTP ID is")) {
-                            receivedOTP = getOTPFromOTPIDString(message);
+                            receivedOTP = getOTPFromString(message);
                         } else {
                             receivedOTP = getOTPFromString(message);
                         }
@@ -58,7 +58,7 @@ public class OtpReceiver extends BroadcastReceiver {
     private String getOTPFromString(String message) {
         String otp = "";
 
-        Pattern digitPattern = Pattern.compile("(?<!\\d)\\d{6}(?!\\d)");
+        Pattern digitPattern = Pattern.compile("(?<!\\d)\\d{6,8}(?!\\d)");
         Pattern alphaNumericPattern = Pattern.compile(
                 "(?<!\\d)[a-zA-Z0-9\\d{1,}]{6}(?!\\d)");
 //					"(\\s)^[a-zA-Z0-9]{6}$(\\s)");
