@@ -3,25 +3,16 @@ package com.autodetectotp;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.autodetectotplibrary.GetOtpMessage;
-
-import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,11 +23,8 @@ public class MainActivity extends AppCompatActivity {
             android.Manifest.permission.READ_SMS,
     };
     private GetOtpMessage getOtpMessage;
-    private WebView webView;
-    private ArrayList<String> bankOtpList = new ArrayList<>();
-    private boolean flag;
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,72 +34,17 @@ public class MainActivity extends AppCompatActivity {
                     PERMISSIONS,
                     PERMISSION_REQUEST_CODE);
 
-        ApiInterface apiService =
-                ApiClient.getClient().create(ApiInterface.class);
-        Call<ArrayList<String>> call = apiService.getBankOtpList();
-        call.enqueue(new Callback<ArrayList<String>>() {
-            @Override
-            public void onResponse(@NonNull Call<ArrayList<String>> call, @NonNull Response<ArrayList<String>> response) {
-                if (response.body() != null && !response.body().isEmpty()) {
-                    bankOtpList.addAll(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ArrayList<String>> call, @NonNull Throwable t) {
-                Log.e("API Error", t.getMessage());
-            }
-        });
-
-        webView = findViewById(R.id.web_view);
+        WebView webView = findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        setOtpReceived();
-        webView.loadUrl("https://www.tecprocesssolution.com/proto/test/checkout.html");
-    }
-
-    public void setOtpReceived() {
-        getOtpMessage = new GetOtpMessage(this, new GetOtpMessage.OnOtpReceivedListener() {
+        webView.setWebViewClient(new WebViewClient() {
             @Override
-            public void onSuccess(final String otp) {
-
-                for (String otpCode : bankOtpList) {
-                    String splitedValue = otpCode.split("~")[1];
-                    if (!flag) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            System.out.println("otpReceived " + otp);
-                            webView.evaluateJavascript("javascript:(function otp() {\n" +
-                                            "  var flag = false;\n" +
-                                            "  var all = document.getElementsByTagName(\"input\");\n" +
-                                            "  for (i = 0; i < all.length; i++) {\n" +
-                                            "    if (all[i].hasAttribute('name') || all[i].hasAttribute('class') || all[i].hasAttribute('id')) {\n" +
-                                            "      if (\n" +
-                                            "        '" + splitedValue + "'.includes(document.getElementsByTagName('input')[i].getAttribute('name'))) {\n" +
-                                            "        document.querySelector('" + splitedValue + "').value = '" + otp + "'\n" +
-                                            "        flag = true;\n" +
-                                            "        break;\n" +
-                                            "      }\n" +
-                                            "    }\n" +
-                                            "  }\n" +
-                                            "  return flag;\n" +
-                                            "})()",
-                                    new ValueCallback<String>() {
-                                        @Override
-                                        public void onReceiveValue(String s) {
-                                            flag = Boolean.parseBoolean(s);
-                                        }
-                                    });
-                        }
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                Log.e("Failure", message);
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return false;
             }
         });
+        webView.loadUrl("https://www.tecprocesssolution.com/proto/test/checkout.html");
+
+        getOtpMessage = new GetOtpMessage(this, webView);
     }
 
     @Override
