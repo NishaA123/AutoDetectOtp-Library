@@ -87,19 +87,12 @@ public class GetOtpMessage {
             if (!flag) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     webView.evaluateJavascript("javascript:(function otp() {\n" +
-                                    "  var flag = false;\n" +
-                                    "  var all = document.getElementsByTagName(\"input\");\n" +
-                                    "  for (i = 0; i < all.length; i++) {\n" +
-                                    "    if (all[i].hasAttribute('name') || all[i].hasAttribute('class') || all[i].hasAttribute('id')) {\n" +
-                                    "      if (\n" +
-                                    "        '" + splitedValue + "'.includes(document.getElementsByTagName('input')[i].getAttribute('name'))) {\n" +
-                                    "        document.querySelector('" + splitedValue + "').value = '" + otp + "'\n" +
-                                    "        flag = true;\n" +
-                                    "        break;\n" +
-                                    "      }\n" +
-                                    "    }\n" +
-                                    "  }\n" +
-                                    "  return flag;\n" +
+                                    "var flag = false;\n" +
+                                    "if(document.querySelector('" + splitedValue + "')){\n" +
+                                    "document.querySelector('" + splitedValue + "').value = '" + otp + "';\n" +
+                                    "flag = true;\n" +
+                                    "}\n" +
+                                    "return flag;\n" +
                                     "})()",
                             new ValueCallback<String>() {
                                 @Override
